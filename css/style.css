@@ -1,0 +1,141 @@
+/* earthview styles */
+
+:root {
+  --bg: #0b0f1a;
+  --panel: #131a2a;
+  --line: #24304a;
+  --text: #e9e4d8;
+  --muted: #8d96ab;
+  --accent: #f2a65a;
+  --accent-dark: #c9803a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Work Sans", system-ui, sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+  background-color: var(--bg);
+  /* a few fake stars so the background isn't just flat black */
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, #ffffff66, transparent),
+    radial-gradient(1px 1px at 70% 80%, #ffffff44, transparent),
+    radial-gradient(1.5px 1.5px at 40% 60%, #ffffff33, transparent),
+    radial-gradient(1px 1px at 85% 15%, #ffffff55, transparent),
+    radial-gradient(1px 1px at 10% 90%, #ffffff44, transparent);
+  background-size: 320px 320px;
+}
+
+a {
+  color: var(--accent);
+}
+
+h1, h2, h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.85rem;
+}
+
+.site-header {
+  text-align: center;
+  padding: 48px 20px 24px;
+}
+
+.site-header h1 {
+  font-size: 3.2rem;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  color: var(--muted);
+  max-width: 540px;
+  margin: 8px auto 0;
+}
+
+#status {
+  text-align: center;
+  min-height: 1.6em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+#status.error {
+  color: #ff8f80;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+
+.card.loading {
+  opacity: 0.45;
+}
+
+/* epic photos are square with a black background so they sit nicely on black */
+.photo {
+  background: #000;
+  display: flex;
+  justify-content: center;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+}
+
+.info {
+  padding: 22px 28px 28px;
+}
+
+.info h2 {
+  font-size: 2rem;
+  margin: 0 0 6px;
+}
+
+.date {
+  color: var(--accent);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  margin: 0 0 4px;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 40px 20px 50px;
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+}
+
+footer p {
+  margin: 6px 0;
+}
+
