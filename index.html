@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earthview | Daily photos of Earth from NASA's EPIC camera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Earthview</h1>
+    <p class="tagline">The whole sunlit side of Earth, photographed several times a day by NASA's EPIC camera from about 1.5 million km away.</p>
+  </header>
+
+  <p id="status" role="status"></p>
+
+  <main>
+    <article id="viewer" class="card">
+      <div class="photo">
+        <img id="earthImg" alt="">
+      </div>
+      <div class="info">
+        <p id="photoTime" class="date"></p>
+        <h2 id="dayTitle"></h2>
+        <p id="caption"></p>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <p>
+      Documentation I followed:
+      <a href="https://api.nasa.gov/" target="_blank" rel="noopener">NASA Open APIs (EPIC section)</a> &middot;
+      <a href="https://epic.gsfc.nasa.gov/about/api" target="_blank" rel="noopener">EPIC API docs</a>
+    </p>
+    <p class="muted">Earth images courtesy of NASA's EPIC team (DSCOVR satellite).</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
