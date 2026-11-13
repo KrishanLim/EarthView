@@ -16,6 +16,13 @@
     <p class="tagline">The whole sunlit side of Earth, photographed several times a day by NASA's EPIC camera from about 1.5 million km away.</p>
   </header>
 
+  <section class="controls" aria-label="Pick a day">
+    <button id="prevDay" title="Previous day with photos">&larr; Prev day</button>
+    <input type="date" id="datePicker" aria-label="Choose a date">
+    <button id="nextDay" title="Next day with photos">Next day &rarr;</button>
+    <button id="latestBtn">Latest</button>
+  </section>
+
   <p id="status" role="status"></p>
 
   <main>
@@ -27,11 +34,17 @@
         <p id="photoTime" class="date"></p>
         <h2 id="dayTitle"></h2>
         <p id="caption"></p>
+        <div class="stepper">
+          <button id="prevPhoto" aria-label="Previous photo">&lsaquo;</button>
+          <span id="photoCount"></span>
+          <button id="nextPhoto" aria-label="Next photo">&rsaquo;</button>
+        </div>
       </div>
     </article>
   </main>
 
   <footer>
+    <p>Built by Krishan Limbu (200612782) for COMP1073 Client-Side JavaScript, taught by Shivali Dhaka.</p>
     <p>
       Documentation I followed:
       <a href="https://api.nasa.gov/" target="_blank" rel="noopener">NASA Open APIs (EPIC section)</a> &middot;

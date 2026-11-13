@@ -139,3 +139,81 @@ footer p {
   margin: 6px 0;
 }
 
+/* buttons + date picker */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 20px 18px;
+}
+
+button,
+input[type="date"] {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+input[type="date"] {
+  color-scheme: dark; /* makes the calendar popup dark too */
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.stepper #prevPhoto,
+.stepper #nextPhoto {
+  font-size: 1.3rem;
+  line-height: 1;
+  padding: 6px 14px;
+}
+
+#photoCount {
+  color: var(--muted);
+  min-width: 100px;
+  text-align: center;
+}
+
+/* while the next photo is loading */
+.photo {
+  position: relative;
+}
+
+.photo img {
+  transition: opacity 0.2s;
+}
+
+.photo.loading img {
+  opacity: 0.4;
+}
+
+.photo.loading::after {
+  content: "loading photo...";
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
