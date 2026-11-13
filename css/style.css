@@ -271,3 +271,45 @@ button.accent:hover:not(:disabled) {
   box-shadow: 0 0 0 1px var(--accent);
 }
 
+/* photo on the left, facts on the right */
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+
+.panel h3 {
+  margin: 0 0 14px;
+  font-size: 1.2rem;
+}
+
+.facts {
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.facts dd {
+  margin: 2px 0 14px;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 860px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,7 +1,8 @@
 // Earthview - daily photos of Earth from NASA's EPIC camera
 // Krishan Limbu (200612782), COMP1073 Client-Side JavaScript
 //
-// stage 3 (part 1): strip with every photo from the day + "play the day" animation
+// stage 3 (part 2): photo details from the json - centre point, distances and the
+// satellite's angle, all worked out from the position vectors
 //
 // docs used:
 //   https://api.nasa.gov/  (EPIC section)
@@ -27,6 +28,11 @@ const nextPhotoBtn = document.getElementById("nextPhoto");
 const photoCountEl = document.getElementById("photoCount");
 const playBtn = document.getElementById("playBtn");
 const dayStrip = document.getElementById("dayStrip");
+const centreEl = document.getElementById("centre");
+const dscovrEl = document.getElementById("dscovrDist");
+const moonEl = document.getElementById("moonDist");
+const sunEl = document.getElementById("sunDist");
+const angleEl = document.getElementById("sevAngle");
 
 let availableDates = []; // every day that has photos, oldest first
 let photos = [];         // the photos for the day on screen
@@ -164,6 +170,8 @@ function showPhoto(i) {
   photoCountEl.textContent = `Photo ${index + 1} of ${photos.length}`;
 
   [...dayStrip.children].forEach((thumb, n) => thumb.classList.toggle("active", n === index));
+
+  showFacts(photo);
 }
 
 function updateDayControls() {
@@ -177,6 +185,52 @@ function updateDayControls() {
 function setStatus(text, isError) {
   statusMsg.textContent = text;
   statusMsg.classList.toggle("error", !!isError);
+}
+
+
+// ---- the extra numbers from the json ----
+
+// older entries keep the positions inside "coords", newer ones have them at the top level
+function positions(photo) {
+  const src = photo.dscovr_j2000_position ? photo : (photo.coords || {});
+  return {
+    dscovr: src.dscovr_j2000_position,
+    moon: src.lunar_j2000_position,
+    sun: src.sun_j2000_position,
+    centre: photo.centroid_coordinates || src.centroid_coordinates
+  };
+}
+
+function length(v) {
+  return Math.hypot(v.x, v.y, v.z);
+}
+
+function km(n) {
+  return Math.round(n).toLocaleString("en-CA") + " km";
+}
+
+function latLon(lat, lon) {
+  return `${Math.abs(lat).toFixed(1)}° ${lat >= 0 ? "N" : "S"}, ${Math.abs(lon).toFixed(1)}° ${lon >= 0 ? "E" : "W"}`;
+}
+
+function showFacts(photo) {
+  const p = positions(photo);
+
+  centreEl.textContent = p.centre ? latLon(p.centre.lat, p.centre.lon) : "-";
+
+  if (!p.dscovr || !p.moon || !p.sun) {
+    dscovrEl.textContent = moonEl.textContent = sunEl.textContent = angleEl.textContent = "not in the data for this photo";
+    return;
+  }
+
+  dscovrEl.textContent = km(length(p.dscovr));
+  moonEl.textContent = km(length(p.moon));
+  sunEl.textContent = (length(p.sun) / 1e6).toFixed(1) + " million km";
+
+  // angle between the satellite and the sun, seen from earth's centre (dot product / lengths = cos of the angle)
+  const dot = p.dscovr.x * p.sun.x + p.dscovr.y * p.sun.y + p.dscovr.z * p.sun.z;
+  const angle = Math.acos(dot / (length(p.dscovr) * length(p.sun))) * 180 / Math.PI;
+  angleEl.textContent = angle.toFixed(1) + "°";
 }
 
 
