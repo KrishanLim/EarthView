@@ -217,3 +217,57 @@ button:disabled {
   font-size: 0.85rem;
 }
 
+button.accent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #1b1206;
+  font-weight: 600;
+}
+
+button.accent:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.day-strip-wrap {
+  max-width: 1100px;
+  margin: 32px auto 0;
+  padding: 0 20px;
+}
+
+.day-strip-wrap h3 {
+  font-size: 1.3rem;
+  margin: 0 0 14px;
+}
+
+.day-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.thumb {
+  flex: 0 0 96px;
+  padding: 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #000;
+}
+
+.thumb span {
+  display: block;
+  padding: 4px 0;
+  font-size: 0.8rem;
+}
+
+.thumb.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+

@@ -1,12 +1,11 @@
 // Earthview - daily photos of Earth from NASA's EPIC camera
 // Krishan Limbu (200612782), COMP1073 Client-Side JavaScript
 //
-// stage 2: date picker using the /available list, prev/next day, stepping through a day's photos.
-// switched from .then() to async/await since there's more going on now
+// stage 3 (part 1): strip with every photo from the day + "play the day" animation
 //
 // docs used:
 //   https://api.nasa.gov/  (EPIC section)
-//   https://epic.gsfc.nasa.gov/about/api
+//   https://epic.gsfc.nasa.gov/about/api  (endpoints + how the image urls are built)
 
 const API_KEY = "pcj7ddRDTf6tPFpTbnJdd7c9RdKnbcQh7BcbmFcT";
 const EPIC_API = "https://api.nasa.gov/EPIC/api/natural";
@@ -26,12 +25,15 @@ const captionEl = document.getElementById("caption");
 const prevPhotoBtn = document.getElementById("prevPhoto");
 const nextPhotoBtn = document.getElementById("nextPhoto");
 const photoCountEl = document.getElementById("photoCount");
+const playBtn = document.getElementById("playBtn");
+const dayStrip = document.getElementById("dayStrip");
 
 let availableDates = []; // every day that has photos, oldest first
 let photos = [];         // the photos for the day on screen
 let index = 0;           // which one of those is showing
 let currentDate = null;
 let requestCount = 0;    // so old responses get ignored if someone clicks fast
+let playTimer = null;
 
 
 // ---- dates ----
@@ -104,12 +106,14 @@ async function callEpic(path) {
 }
 
 // the json only gives an image name, the actual file lives in the archive under the date
-function imageUrl(photo) {
+// size is "jpg" (1080px) or "thumbs" (120px). there's also "png" but those are a few MB each
+function imageUrl(photo, size) {
   const [y, m, d] = photo.date.split(" ")[0].split("-");
-  return `${EPIC_ARCHIVE}/${y}/${m}/${d}/jpg/${photo.image}.jpg`;
+  return `${EPIC_ARCHIVE}/${y}/${m}/${d}/${size}/${photo.image}.jpg`;
 }
 
 async function loadDay(wanted) {
+  stopPlaying();
   const date = closestAvailable(wanted);
   const thisRequest = ++requestCount;
 
@@ -124,6 +128,7 @@ async function loadDay(wanted) {
     photos = list;
     currentDate = date;
     updateDayControls();
+    renderStrip();
     showPhoto(0);
 
     if (date !== wanted) {
@@ -147,7 +152,7 @@ function showPhoto(i) {
   index = (i + photos.length) % photos.length; // wraps around at both ends
   const photo = photos[index];
 
-  const src = imageUrl(photo);
+  const src = imageUrl(photo, "jpg");
   if (earthImg.src !== src) {
     photoBox.classList.add("loading"); // dims the old photo until the new one shows up
     earthImg.src = src;
@@ -157,6 +162,8 @@ function showPhoto(i) {
   dayTitleEl.textContent = prettyDate(currentDate);
   captionEl.textContent = photo.caption;
   photoCountEl.textContent = `Photo ${index + 1} of ${photos.length}`;
+
+  [...dayStrip.children].forEach((thumb, n) => thumb.classList.toggle("active", n === index));
 }
 
 function updateDayControls() {
@@ -170,6 +177,57 @@ function updateDayControls() {
 function setStatus(text, isError) {
   statusMsg.textContent = text;
   statusMsg.classList.toggle("error", !!isError);
+}
+
+
+// ---- strip of every photo from the day ----
+
+function renderStrip() {
+  dayStrip.innerHTML = "";
+
+  photos.forEach((photo, i) => {
+    const btn = document.createElement("button");
+    btn.className = "thumb";
+    btn.title = photo.date + " UTC";
+
+    const img = document.createElement("img");
+    img.src = imageUrl(photo, "thumbs");
+    img.alt = "";
+    img.loading = "lazy";
+
+    const label = document.createElement("span");
+    label.textContent = takenAt(photo).toISOString().slice(11, 16);
+
+    btn.append(img, label);
+    btn.addEventListener("click", () => {
+      stopPlaying();
+      showPhoto(i);
+    });
+    dayStrip.appendChild(btn);
+  });
+}
+
+
+// ---- play the day like a little animation, you can see earth spin ----
+
+function startPlaying() {
+  if (photos.length < 2) return;
+
+  // load all the full size images first so it doesn't flicker on the first loop
+  photos.forEach(photo => {
+    const img = new Image();
+    img.src = imageUrl(photo, "jpg");
+  });
+
+  playBtn.textContent = "Pause";
+  playTimer = setInterval(() => showPhoto(index + 1), 700);
+}
+
+function stopPlaying() {
+  if (!playTimer) return;
+  clearInterval(playTimer);
+  playTimer = null;
+  playBtn.textContent = "Play the day";
 }
 
 
@@ -197,8 +255,20 @@ nextDayBtn.addEventListener("click", () => {
 
 latestBtn.addEventListener("click", () => loadDay(latestDate()));
 
-prevPhotoBtn.addEventListener("click", () => showPhoto(index - 1));
-nextPhotoBtn.addEventListener("click", () => showPhoto(index + 1));
+prevPhotoBtn.addEventListener("click", () => {
+  stopPlaying();
+  showPhoto(index - 1);
+});
+
+nextPhotoBtn.addEventListener("click", () => {
+  stopPlaying();
+  showPhoto(index + 1);
+});
+
+playBtn.addEventListener("click", () => {
+  if (playTimer) stopPlaying();
+  else startPlaying();
+});
 
 
 // ---- start ----
@@ -209,6 +279,7 @@ async function start() {
     datePicker.min = availableDates[0];
     datePicker.max = latestDate();
   } catch (err) {
+    // not the end of the world, the date picker just won't have limits
     console.error("couldn't get the list of available dates", err);
   }
 
