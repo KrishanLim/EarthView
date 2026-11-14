@@ -1,8 +1,9 @@
 // Earthview - daily photos of Earth from NASA's EPIC camera
 // Krishan Limbu (200612782), COMP1073 Client-Side JavaScript
 //
-// stage 3 (part 2): photo details from the json - centre point, distances and the
-// satellite's angle, all worked out from the position vectors
+// stage 3 (part 3): random day, the day goes in the url so it can be shared, arrow keys.
+// stage 3 overall = using more of the json: every photo from a day, a "play the day" animation,
+// and distances worked out from the position vectors
 //
 // docs used:
 //   https://api.nasa.gov/  (EPIC section)
@@ -16,6 +17,7 @@ const datePicker = document.getElementById("datePicker");
 const prevDayBtn = document.getElementById("prevDay");
 const nextDayBtn = document.getElementById("nextDay");
 const latestBtn = document.getElementById("latestBtn");
+const randomBtn = document.getElementById("randomBtn");
 const statusMsg = document.getElementById("status");
 const viewer = document.getElementById("viewer");
 const earthImg = document.getElementById("earthImg");
@@ -176,6 +178,7 @@ function showPhoto(i) {
 
 function updateDayControls() {
   datePicker.value = currentDate;
+  history.replaceState(null, "", "#" + currentDate); // so a day can be bookmarked / shared
 
   const pos = availableDates.indexOf(currentDate);
   prevDayBtn.disabled = pos <= 0;
@@ -309,6 +312,11 @@ nextDayBtn.addEventListener("click", () => {
 
 latestBtn.addEventListener("click", () => loadDay(latestDate()));
 
+randomBtn.addEventListener("click", () => {
+  if (availableDates.length === 0) return;
+  loadDay(availableDates[Math.floor(Math.random() * availableDates.length)]);
+});
+
 prevPhotoBtn.addEventListener("click", () => {
   stopPlaying();
   showPhoto(index - 1);
@@ -324,6 +332,13 @@ playBtn.addEventListener("click", () => {
   else startPlaying();
 });
 
+// left / right arrow keys step through the photos (but not while typing a date)
+document.addEventListener("keydown", e => {
+  if (e.target === datePicker || photos.length === 0) return;
+  if (e.key === "ArrowLeft") prevPhotoBtn.click();
+  if (e.key === "ArrowRight") nextPhotoBtn.click();
+});
+
 
 // ---- start ----
 
@@ -337,7 +352,9 @@ async function start() {
     console.error("couldn't get the list of available dates", err);
   }
 
-  loadDay(latestDate());
+  // if the url already has a date (like index.html#2020-07-04) open that day
+  const fromHash = location.hash.slice(1);
+  loadDay(/^\d{4}-\d{2}-\d{2}$/.test(fromHash) ? fromHash : latestDate());
 }
 
 start();
